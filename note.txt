@@ -1,0 +1,72 @@
+========================================
+  HOW TO RUN THE PERSONAL WIKI - DAILY
+========================================
+
+--- STEP 1: START THE APP (Every day when you want to use it) ---
+
+Open Terminal and run:
+  cd "/Users/venkateshwarinavaneetham/Desktop/wiki/Personal Wiki with LLM"
+  pnpm dev
+
+Then open your browser and go to: http://localhost:5173
+
+
+--- STEP 2: DAILY EMAIL DIGEST (Runs automatically - no action needed) ---
+
+The system is set up to automatically send emails every day at 7:00 AM SGT
+via GitHub Actions. It does NOT require your laptop to be on.
+
+What gets sent automatically:
+  - Singapore CNA news digest (top 10 articles summarized by AI)
+  - Your personal wiki digest (creative summary of your wiki pages)
+  - Delivered to: rnvenkateshwari@gmail.com
+
+GitHub Actions workflow file:
+  ~/personal-wiki/.github/workflows/daily-digest.yml
+
+
+--- STEP 3: SEND EMAIL MANUALLY (optional - for testing) ---
+
+1. Start the app (Step 1 above)
+2. Go to http://localhost:5173
+3. Click the "Maintenance" tab
+4. Click "Send News Digest Now"  → sends CNA Singapore news email
+5. Click "Send Test Email Now"   → sends wiki digest email
+6. Check your inbox at rnvenkateshwari@gmail.com
+
+
+--- STEP 4: STOP THE APP (when done) ---
+
+In the terminal where pnpm dev is running, press:
+  Ctrl + C
+
+
+========================================
+  SUPABASE BACKEND (already deployed)
+========================================
+
+Backend URL: https://hyxzpcqihvyrmyozdhid.supabase.co/functions/v1/make-server-defea855
+This runs 24/7 in the cloud. You do NOT need to start/stop it.
+
+
+========================================
+  REQUIRED KEYS (already configured)
+========================================
+
+The following secrets are set in Supabase Dashboard:
+  - GROQ_API_KEY        (AI processing - free tier)
+  - RESEND_API_KEY      (email sending - free tier, 100 emails/day)
+
+If you need to update them:
+  Go to https://supabase.com → Your Project → Settings → Edge Functions → Secrets
+
+
+========================================
+  QUICK REFERENCE
+========================================
+
+Start app:    pnpm dev  (from project folder)
+Open app:     http://localhost:5173
+Daily email:  Automatic at 7:00 AM SGT (via GitHub Actions)
+Test email:   Maintenance tab → click send buttons
+Stop app:     Ctrl + C in terminal
