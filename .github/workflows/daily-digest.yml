@@ -1,4 +1,4 @@
-name: Daily Wiki Digest Email
+name: Daily Digest Emails
 
 on:
   schedule:
@@ -9,12 +9,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  send-digest:
+  send-digests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send Daily Wiki Digest Email
+      - name: Send Singapore News Digest Email
         run: |
+          echo "📰 Sending CNA Singapore News Digest..."
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            https://hyxzpcqihvyrmyozdhid.supabase.co/functions/v1/make-server-defea855/send-news-digest \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eHpwY3FpaHZ5cm15b3pkaGlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUxODQsImV4cCI6MjA5MTgzMTE4NH0.91hbSVDCFyT8sdpjJFZUfwqmvNqU1vthXFH7-wlbn5E" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "HTTP Status: $http_code"
+          echo "Response: $body"
+
+          if [ "$http_code" -ne 200 ]; then
+            echo "⚠️  Warning: Failed to send news digest"
+          else
+            echo "✅ CNA news digest sent successfully!"
+          fi
+
+      - name: Send Wiki Digest Email
+        run: |
+          echo "📚 Sending Personal Wiki Digest..."
           response=$(curl -s -w "\n%{http_code}" -X POST \
             https://hyxzpcqihvyrmyozdhid.supabase.co/functions/v1/make-server-defea855/send-daily-digest \
             -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eHpwY3FpaHZ5cm15b3pkaGlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUxODQsImV4cCI6MjA5MTgzMTE4NH0.91hbSVDCFyT8sdpjJFZUfwqmvNqU1vthXFH7-wlbn5E" \
@@ -27,14 +48,13 @@ jobs:
           echo "Response: $body"
 
           if [ "$http_code" -ne 200 ]; then
-            echo "Error: Failed to send daily digest email"
-            exit 1
+            echo "⚠️  Warning: Failed to send wiki digest"
+          else
+            echo "✅ Wiki digest sent successfully!"
           fi
-
-          echo "✅ Daily digest email sent successfully!"
 
       - name: Log completion
         if: always()
         run: |
-          echo "Daily digest job completed at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-          echo "Singapore Time: $(TZ='Asia/Singapore' date '+%Y-%m-%d %H:%M:%S %Z')"
+          echo "📧 Daily digest job completed at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "🇸🇬 Singapore Time: $(TZ='Asia/Singapore' date '+%Y-%m-%d %H:%M:%S %Z')"
